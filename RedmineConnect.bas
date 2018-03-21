@@ -1,4 +1,14 @@
 Attribute VB_Name = "RedmineConnect"
+'
+' RedmineConnect
+' (c) Petr Bobov - https://github.com/PetrBobov/proj-assistant
+'
+'
+' @author: petr.bobov@gmail.com
+' @license: MIT (http://www.opensource.org/licenses/mit-license.php)
+'
+' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ '
+
 Option Explicit
 
 ' common constants declaration

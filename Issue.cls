@@ -7,6 +7,16 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'
+' Issue
+' (c) Petr Bobov - https://github.com/PetrBobov/proj-assistant
+'
+'
+' @author: petr.bobov@gmail.com
+' @license: MIT (http://www.opensource.org/licenses/mit-license.php)
+'
+' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ '
+
 Option Explicit
 
 ' Class module for keeping information of single Issue and activity if require
