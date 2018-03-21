@@ -16,9 +16,9 @@ Const ContentType = "application/json" ' substitute
 Const ResponseFormat = Json ' substitute
 Const Insecure = True
 ' custom constants declaration
-Const BaseURL = "http://212.109.217.200" ' base URL
+Const BaseURL = "http://200.200.200.200" ' base URL
 Const KeyName = "X-Redmine-API-Key" ' redmine api key
-Const KeyValue = "dc552a23892c8f994adb3c639d49885a8e4e71b8" ' redmine api key value
+Const KeyValue = "dc552a23892c23bhjadb3c639d49885a8e4e71b8" ' redmine api key value
 Const UserIdFormat = "00" ' How much place may be in user id
 Const IssueIdFormat = "0000" ' How much place may be in issue id
 Const ActivityIdFormat = "00" ' How much place may be in activity id
