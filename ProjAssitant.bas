@@ -1,6 +1,6 @@
-Attribute VB_Name = "RedmineConnect"
+Attribute VB_Name = "ProjAssitant"
 '
-' RedmineConnect
+' ProjAssistant
 ' (c) Petr Bobov - https://github.com/PetrBobov/proj-assistant
 '
 '
@@ -16,9 +16,9 @@ Const ContentType = "application/json" ' substitute
 Const ResponseFormat = Json ' substitute
 Const Insecure = True
 ' custom constants declaration
-Const BaseURL = "http://200.200.200.200" ' base URL
+Const BaseURL = "http://xxx.xxx.xxx.xxx" ' base URL
 Const KeyName = "X-Redmine-API-Key" ' redmine api key
-Const KeyValue = "dc552a23892c23bhjadb3c639d49885a8e4e71b8" ' redmine api key value
+Const KeyValue = "xxx" ' redmine api key value
 Const UserIdFormat = "00" ' How much place may be in user id
 Const IssueIdFormat = "0000" ' How much place may be in issue id
 Const ActivityIdFormat = "00" ' How much place may be in activity id
@@ -58,10 +58,6 @@ Private Function checkDateFormat(sDate As String, sFormat As String) As Boolean
 
 End Function
 
-Public Sub SetVision()
-    Application.ScreenUpdating = True
-End Sub
-
 Public Sub setActualWork()
 
 Dim v_DateFrom As String ' dateFrom
@@ -90,8 +86,6 @@ v_DateFrom = dateFrom
 If v_DateFrom = "-1" Then Exit Sub
 
 If MsgBox("Updating may be proceed long time. Are you sure?", vbExclamation + vbOKCancel, "Information") = vbCancel Then Exit Sub
-
-'Application.ScreenUpdating = False
 
 Set ActualWorks = GetTimes(v_DateFrom)
 
@@ -141,8 +135,6 @@ For Each oActualWork In ActualWorks
         End If
     Next
 Next
-
-'Application.ScreenUpdating = True
 
 Call MsgBox("Updating finished", vbInformation, "Information")
 
