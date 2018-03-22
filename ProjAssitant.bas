@@ -24,7 +24,7 @@ Const IssueIdFormat = "0000" ' How much place may be in issue id
 Const ActivityIdFormat = "00" ' How much place may be in activity id
 Const TrackerID = "6" ' Default tracker ID
 Const DaysDelta = -2 ' How much days shift back from today for default value inbox form
-Const GetOvertime = True '  true if overtime values were marked in redmine with special boolean parameters which order was defined by OvertimePPos
+Const GetOvertime = True ' true if overtime values were marked in redmine with special boolean parameters which order was defined by OvertimePPos
 Const OvertimePPos = 2 ' Position of overtime parameter in Redmine (Administration - Custom fields - Time Entries)
 
 '-------------------
@@ -333,7 +333,7 @@ Private Sub getIssue(sIssueId As String, oIssue As Issue)
         oIssue.Tracker = CStr(Response.Data("issue")("tracker")("name"))
         oIssue.Subject = CStr(Response.Data("issue")("subject"))
         oIssue.Hyperlink = Replace(RedmineClient.GetFullUrl(IssueRequest), ".json", "")
-        'sStatus = CStr(Response.Data("issue")("status")("name"))
+        oIssue.Status = CStr(Response.Data("issue")("status")("name"))
         
         Dim st As String
         st = CStr(Chr(34) & "parent" & Chr(34) & ":{")
@@ -623,3 +623,39 @@ Private Function getProjectID()
     getProjectID = ActiveProject.ProjectSummaryTask.Text1
 End Function
 
+Public Sub addTimeToFinish()
+
+Dim col_Tasks As Tasks
+Dim oTask As Task
+Dim oIssue As Issue
+
+Set oIssue = New Issue
+
+Set col_Tasks = ActiveProject.Tasks
+
+For Each oTask In col_Tasks
+    If oTask.OutlineChildren.Count = 0 And oTask.Resources.Count = 1 Then
+        Call getIssue(oTask.Text1, oIssue)
+        Select Case oIssue.Status
+            Case Is = "Закрыта", Is = "Проверена", Is = "Отклонена"
+                oTask.RemainingWork = 0
+            Case Is = "На проверку"
+                Select Case oTask.Text4
+                    Case Is = "Разработка"
+                        oTask.RemainingWork = 0
+                    Case Is = "Тестирование"
+                        If oTask.RemainingWork = 0 Then
+                            oTask.RemainingWork = 4 * 60
+                        End If
+                    Case Else
+                        oTask.RemainingWork = 0
+                End Select
+            Case Is = "В работе"
+                If oTask.RemainingWork < 2 Then
+                    oTask.RemainingWork = 8 * 60
+                End If
+        End Select
+    End If
+Next
+
+End Sub

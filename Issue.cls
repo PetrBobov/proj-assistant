@@ -29,6 +29,7 @@ Private m_sStartDate As String ' Issue start date
 Private m_sDueDate As String ' Issue due date
 Private m_sEstimatedHours As String ' Issue estimated hours
 Private m_sActivity As String ' Activity if require
+Private m_sStatus As String ' Issue Status
 
 Property Get ID() As String
     ID = m_sID
@@ -102,6 +103,14 @@ Property Let Activity(ByVal sActivity As String)
     m_sActivity = sActivity
 End Property
 
+Property Get Status() As String
+    Status = m_sStatus
+End Property
+
+Property Let Status(ByVal sStatus As String)
+    m_sStatus = sStatus
+End Property
+
 Private Sub Class_Initialize()
     m_sID = ""
     m_sSubject = ""
@@ -112,4 +121,5 @@ Private Sub Class_Initialize()
     m_sDueDate = ""
     m_sEstimatedHours = ""
     m_sActivity = ""
+    m_sStatus = ""
 End Sub
