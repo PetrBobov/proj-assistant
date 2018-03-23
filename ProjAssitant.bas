@@ -60,11 +60,10 @@ End Function
 
 Public Sub setActualWork()
 
-Dim v_DateFrom As String ' dateFrom
+Dim v_DateFrom As String ' date from which actual work request
 Dim ActualWorks As Collection ' grouping and sorting Actual work from Redmine
 Dim oActualWork As TimeEntry ' single object TimeEntry class
 Dim oIssue As Issue ' exist Issue
-Dim dateFrom As String ' date from which actual work request
 Dim ProjectResources As Resources
 Dim oResource As Resource ' single MS Project resource
 Dim oTask As Task ' single MS Project task
@@ -81,7 +80,7 @@ If getProjectID = "" Then
     Exit Sub
 End If
 
-v_DateFrom = dateFrom
+v_DateFrom = getDateFrom
     
 If v_DateFrom = "-1" Then Exit Sub
 
@@ -282,7 +281,9 @@ Private Function createTask(oIssue As Issue) As Task
         OutlineLevel = 1
     Else
         If TaskOutlineChildrenExist(ParentTask) Then
-            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
+            'Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
+            ' probably bug is here
+            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject)
             OutlineLevel = ParentTask.OutlineLevel + 1
         Else
             Set ProjectTasks = ActiveProject.Tasks
@@ -657,5 +658,7 @@ For Each oTask In col_Tasks
         End Select
     End If
 Next
+
+Call MsgBox("Updating finished", vbInformation, "Information")
 
 End Sub
