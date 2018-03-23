@@ -29,7 +29,7 @@ Const OvertimePPos = 2 ' Position of overtime parameter in Redmine (Administrati
 
 '-------------------
 
-Private Function dateFrom() As String ' call dateFrom from user by user form, dateTo equal Now by default
+Private Function getDateFrom() As String ' call dateFrom from user by user form, dateTo equal Now by default
 
     Dim sDateFrom As String
 
@@ -37,9 +37,9 @@ Private Function dateFrom() As String ' call dateFrom from user by user form, da
 
     If Not checkDateFormat(sDateFrom, "YYYY-MM-DD") Then
         MsgBox "dateFrom wrong value!"
-        dateFrom = "-1"
+        getDateFrom = "-1"
     Else
-        dateFrom = sDateFrom
+        getDateFrom = sDateFrom
     End If
 
 End Function
