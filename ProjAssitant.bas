@@ -281,9 +281,7 @@ Private Function createTask(oIssue As Issue) As Task
         OutlineLevel = 1
     Else
         If TaskOutlineChildrenExist(ParentTask) Then
-            'Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
-            ' probably bug is here
-            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject)
+            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
             OutlineLevel = ParentTask.OutlineLevel + 1
         Else
             Set ProjectTasks = ActiveProject.Tasks
@@ -357,12 +355,10 @@ Dim sSubject As String
 Dim sTracker As String
 Dim sWorkType As String
 Dim sHyperlink As String
-Dim ParentTaskID As String
 Dim oIssue As Issue
 
     Set oIssue = New Issue
     
-    ParentTaskID = 0
     For Each sTask In ActiveProject.Tasks
         If sTask.Text1 = sTaskID Then
             If sTask.Resources.Count = 0 Then
@@ -375,12 +371,11 @@ Dim oIssue As Issue
                 oIssue.Activity = sTask.Text4
                 oIssue.Hyperlink = sTask.Hyperlink
                 oIssue.ParentIssueID = sTask.Text5
-                Set searchParentTask = Nothing
             End If
         End If
     Next
     
-    If ParentTaskID = 0 Then
+    If oIssue.ParentIssueID = "" Then
         Set searchParentTask = Nothing
     Else
         Set sTask = createTask(oIssue)
