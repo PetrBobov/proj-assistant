@@ -276,18 +276,23 @@ Private Function createTask(oIssue As Issue) As Task
     
     If ParentTask Is Nothing Then
         Set ProjectTasks = ActiveProject.Tasks
-        Set sNewTask = ProjectTasks.Add(oIssue.ID + ". " + oIssue.Subject)
+        Set sNewTask = ProjectTasks.Add(oIssue.ID + ". " + oIssue.Subject, ProjectTasks.Count + 1)
         Set ProjectTasks = Nothing
         OutlineLevel = 1
     Else
         If TaskOutlineChildrenExist(ParentTask) Then
-            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
+            'Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
+            Dim m As Integer
+            m = getOutlineChildrenTotalCount(ParentTask)
+            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + m + ParentTask.OutlineChildren.Count + 1)
             OutlineLevel = ParentTask.OutlineLevel + 1
         Else
-            Set ProjectTasks = ActiveProject.Tasks
-            Set sNewTask = ProjectTasks.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + 1)
+            'Set ProjectTasks = ActiveProject.Tasks
+            'Set sNewTask = ProjectTasks.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + 1)
+            'Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + ParentTask.OutlineChildren.Count + 1)
+            Set sNewTask = ParentTask.OutlineChildren.Add(oIssue.ID + ". " + oIssue.Subject, ParentTask.ID + getOutlineChildrenTotalCount(ParentTask) + ParentTask.OutlineChildren.Count + 1)
             OutlineLevel = ParentTask.OutlineLevel + 1
-            Set ProjectTasks = Nothing
+            'Set ProjectTasks = Nothing
         End If
     End If
 
@@ -302,6 +307,22 @@ Private Function createTask(oIssue As Issue) As Task
     Set createTask = sNewTask
     Set sNewTask = Nothing
     Set ParentTask = Nothing
+End Function
+
+Private Function getOutlineChildrenTotalCount(oTask As Task) As Integer
+    
+    Dim oneTask As Task
+    Dim i As Integer
+    
+    i = 0
+    For Each oneTask In oTask.OutlineChildren
+        If TaskOutlineChildrenExist(oneTask) Then
+            i = i + oneTask.OutlineChildren.Count + getOutlineChildrenTotalCount(oneTask)
+        End If
+    Next
+    
+    getOutlineChildrenTotalCount = i
+
 End Function
 
 Private Sub getIssue(sIssueId As String, oIssue As Issue)
@@ -357,34 +378,40 @@ Dim sWorkType As String
 Dim sHyperlink As String
 Dim oIssue As Issue
 
-    Set oIssue = New Issue
-    
-    For Each sTask In ActiveProject.Tasks
-        If sTask.Text1 = sTaskID Then
-            If sTask.Resources.Count = 0 Then
-                Set searchParentTask = sTask
-                Exit Function
-            Else
-                oIssue.ID = sTask.Text1
-                oIssue.Subject = sTask.Text2
-                oIssue.Tracker = sTask.Text3
-                oIssue.Activity = sTask.Text4
-                oIssue.Hyperlink = sTask.Hyperlink
-                oIssue.ParentIssueID = sTask.Text5
+    If Not (sTaskID = "") Then
+        Set oIssue = New Issue
+        
+        For Each sTask In ActiveProject.Tasks
+            If sTask.Text1 = sTaskID Then
+                If sTask.Resources.Count = 0 Then
+                    Set searchParentTask = sTask
+                    Exit Function
+                Else
+                    oIssue.ID = sTask.Text1
+                    oIssue.Subject = sTask.Text2
+                    oIssue.Tracker = sTask.Text3
+                    oIssue.Activity = sTask.Text4
+                    oIssue.Hyperlink = sTask.Hyperlink
+                    oIssue.ParentIssueID = sTask.Text5
+                End If
             End If
+        Next
+        
+        If oIssue.ParentIssueID = "" Then
+            Call getIssue(sTaskID, oIssue)
+            Set sTask = createTask(oIssue)
+            Set searchParentTask = sTask
+            Exit Function
+        Else
+            Set sTask = createTask(oIssue)
+            Set searchParentTask = sTask
+            Exit Function
         End If
-    Next
-    
-    If oIssue.ParentIssueID = "" Then
-        Set searchParentTask = Nothing
-    Else
-        Set sTask = createTask(oIssue)
-        Set searchParentTask = sTask
-        Exit Function
+        
+        Set oIssue = Nothing
     End If
     
     Set searchParentTask = Nothing
-    Set oIssue = Nothing
     
 End Function
 
