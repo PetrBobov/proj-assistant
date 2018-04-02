@@ -442,6 +442,7 @@ Dim TSV As TimeScaleValue
     If oTimeEntry.OverTime Then
         Set TSVS = oResAssigment.TimeScaleData(CDate(oTimeEntry.Spent), CDate(oTimeEntry.Spent), pjAssignmentTimescaledActualOvertimeWork, pjTimescaleDays, 1)
         For Each TSV In TSVS
+            TSV.Clear
             TSV.Value = oTimeEntry.Hours * 60
         Next
         If Not (oTimeEntry.Comment = "") Then oResAssigment.AppendNotes (oTimeEntry.Spent + ": " + oTimeEntry.Comment + VBA.vbCrLf)
@@ -449,6 +450,7 @@ Dim TSV As TimeScaleValue
     Else
         Set TSVS = oResAssigment.TimeScaleData(CDate(oTimeEntry.Spent), CDate(oTimeEntry.Spent), pjAssignmentTimescaledActualWork, pjTimescaleDays, 1)
         For Each TSV In TSVS
+            TSV.Clear
             TSV.Value = oTimeEntry.Hours * 60
         Next
         If Not (oTimeEntry.Comment = "") Then oResAssigment.AppendNotes (oTimeEntry.Spent + ": " + oTimeEntry.Comment + VBA.vbCrLf)
@@ -683,4 +685,53 @@ Next
 
 Call MsgBox("Updating finished", vbInformation, "Information")
 
+End Sub
+
+Public Sub clearActualWork()
+    
+    Dim v_DateFrom As String
+    Dim v_DateTo As String
+    
+    v_DateFrom = getDateFrom
+    If v_DateFrom = "-1" Then Exit Sub
+    
+    v_DateTo = getDateFrom
+    If v_DateTo = "-1" Then Exit Sub
+    
+    If CDate(v_DateFrom) > CDate(v_DateTo) Then
+        MsgBox ("Incorrect dates are inputted")
+        Exit Sub
+    End If
+    
+    If MsgBox("Are you sure to clear actual work from " + v_DateFrom + " to " + v_DateTo + " (not included) ?", vbExclamation + vbOKCancel, "Information") = vbCancel Then Exit Sub
+    
+    Dim colTasks As Tasks
+    Dim oTask As Task
+    Dim colAssignments As Assignments
+    Dim oAssignment As Assignment
+    Dim TSVS As TimeScaleValues
+    Dim TSV As TimeScaleValue
+    
+    Set colTasks = ActiveProject.Tasks
+    
+    For Each oTask In colTasks
+        Set colAssignments = oTask.Assignments
+        For Each oAssignment In colAssignments
+            
+            Set TSVS = oAssignment.TimeScaleData(CDate(v_DateFrom), CDate(v_DateTo), pjAssignmentTimescaledActualOvertimeWork, pjTimescaleDays, 1)
+            For Each TSV In TSVS
+                TSV.Clear
+            Next
+            Set TSVS = Nothing
+            
+            Set TSVS = oAssignment.TimeScaleData(CDate(v_DateFrom), CDate(v_DateTo), pjAssignmentTimescaledActualWork, pjTimescaleDays, 1)
+            For Each TSV In TSVS
+                TSV.Clear
+            Next
+            Set TSVS = Nothing
+        
+        Next
+        Set colAssignments = Nothing
+    Next
+        
 End Sub
