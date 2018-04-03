@@ -779,3 +779,7 @@ Public Function getProjects() As Collection
     Set getProjects = MyProjects
     
 End Function
+
+Public Sub configureProject()
+    ProjectsListForm.Show
+End Sub

@@ -39,4 +39,5 @@ End Sub
 
 Private Sub CommandButton1_Click()
     setProjectID CStr(ListBox1.Value)
+    Me.Hide
 End Sub
