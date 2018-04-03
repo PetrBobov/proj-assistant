@@ -644,8 +644,12 @@ Function updateRedmineIssue(sIssueId As String, oTask As Task) As Boolean
     Set oIssue = Nothing
 End Function
 
-Private Function getProjectID()
+Private Function getProjectID() As String
     getProjectID = ActiveProject.ProjectSummaryTask.Text1
+End Function
+
+Public Function setProjectID(ProjectID As String)
+    ActiveProject.ProjectSummaryTask.Text1 = ProjectID
 End Function
 
 Public Sub addTimeToFinish()
@@ -735,3 +739,43 @@ Public Sub clearActualWork()
     Next
         
 End Sub
+
+Public Function getProjects() As Collection
+    
+    Dim MyProjects As Collection
+    Dim RedmineClient As New WebClient
+    RedmineClient.BaseURL = BaseURL
+    RedmineClient.Insecure = Insecure
+
+    ' Create a WebRequest for getting directions
+    Dim ProjectsRequest As New WebRequest
+    ProjectsRequest.Resource = "/projects.json"
+    ProjectsRequest.Method = WebMethod.HttpGet
+    
+    ' Set the request format
+    ProjectsRequest.SetHeader KeyName, KeyValue
+    ProjectsRequest.ContentType = ContentType
+    ProjectsRequest.ResponseFormat = ResponseFormat
+    
+    ' Execute the request and work with the response
+    Dim Response As WebResponse
+    Set Response = RedmineClient.Execute(ProjectsRequest)
+    
+    Dim i As Integer
+    
+    Set MyProjects = New Collection
+    
+    If Response.StatusCode = WebStatusCode.Ok Then
+        For i = 1 To Response.Data("projects").Count
+            Call MyProjects.Add(Array(CStr(Response.Data("projects")(i)("id")), CStr(Response.Data("projects")(i)("identifier")), CStr(Response.Data("projects")(i)("name"))), CStr(Response.Data("projects")(i)("id")))
+            'Debug.Print CStr(Response.Data("projects")(i)("id")) + VBA.vbTab + CStr(Response.Data("projects")(i)("name")) + VBA.vbTab + CStr(Response.Data("projects")(i)("identifier"))
+        Next
+    Else
+        Call MsgBox("Something wrong", vbCritical, "Error")
+        Set getProjects = Nothing
+        'Debug.Print "Error here: " & Response.StatusDescription
+    End If
+    
+    Set getProjects = MyProjects
+    
+End Function
